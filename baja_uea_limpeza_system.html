@@ -1,0 +1,540 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary)}
+.app{max-width:780px;margin:0 auto;padding:1rem}
+.header{display:flex;align-items:center;gap:12px;padding:1rem 1.25rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1rem}
+.logo{width:40px;height:40px;background:#F5C400;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:13px;color:#412402}
+.header h1{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.header p{font-size:12px;color:var(--color-text-secondary)}
+.nav{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.nav button{padding:7px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s}
+.nav button:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav button.active{background:#FAEEDA;border-color:#FAC775;color:#633806;font-weight:500}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.section-title{font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:.04em}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.member-btn{padding:10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);font-size:13px;color:var(--color-text-primary);cursor:pointer;text-align:left;transition:all .15s;line-height:1.3}
+.member-btn:hover{border-color:#FAC775;background:#FAEEDA;color:#633806}
+.member-btn.selected{border-color:#FAC775;background:#FAC775;color:#412402;font-weight:500}
+.member-btn .role{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.member-btn.selected .role{color:#633806}
+.task-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:6px;background:var(--color-background-primary)}
+.task-row.done{background:var(--color-background-success);border-color:var(--color-border-success)}
+.task-check{width:20px;height:20px;border-radius:4px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.task-check.checked{background:#639922;border-color:#639922}
+.task-info{flex:1}
+.task-name{font-size:13px;color:var(--color-text-primary);font-weight:500}
+.task-meta{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.task-responsible{font-size:12px;color:var(--color-text-secondary)}
+.task-auditor{font-size:11px;padding:2px 8px;border-radius:99px;background:#FAEEDA;color:#633806;border:0.5px solid #FAC775}
+.floor-label{font-size:12px;font-weight:500;padding:4px 10px;border-radius:99px;background:var(--color-background-secondary);color:var(--color-text-secondary);display:inline-flex;align-items:center;gap:4px;margin-bottom:8px}
+.status-banner{padding:12px 16px;border-radius:var(--border-radius-md);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.status-banner.warning{background:#FAEEDA;border:0.5px solid #FAC775;color:#633806}
+.status-banner.success{background:var(--color-background-success);border:0.5px solid var(--color-border-success);color:var(--color-text-success)}
+.status-banner.info{background:#E6F1FB;border:0.5px solid #B5D4F4;color:#0C447C}
+.face-box{display:flex;flex-direction:column;align-items:center;gap:16px;padding:2rem}
+.face-circle{width:120px;height:120px;border-radius:50%;border:3px solid var(--color-border-tertiary);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--color-background-secondary);position:relative;overflow:hidden;cursor:pointer}
+.face-circle.scanning{border-color:#FAC775;animation:pulse 1.2s ease-in-out infinite}
+.face-circle.ok{border-color:#639922;background:#EAF3DE}
+.face-circle.fail{border-color:#E24B4A;background:#FCEBEB}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.face-label{font-size:13px;color:var(--color-text-secondary);text-align:center;max-width:240px}
+.btn-primary{padding:10px 20px;border-radius:var(--border-radius-md);border:0.5px solid #FAC775;background:#FAC775;color:#412402;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:#EF9F27;border-color:#EF9F27}
+.btn-secondary{padding:8px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;transition:all .15s}
+.btn-secondary:hover{background:var(--color-background-secondary)}
+.history-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:6px;cursor:pointer;transition:all .15s}
+.history-row:hover{background:var(--color-background-secondary)}
+.history-date{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.history-meta{font-size:12px;color:var(--color-text-secondary)}
+.progress-bar{height:6px;border-radius:99px;background:var(--color-background-secondary);overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:99px;background:#639922;transition:width .4s}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.badge.green{background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97}
+.badge.amber{background:#FAEEDA;color:#633806;border:0.5px solid #FAC775}
+.badge.blue{background:#E6F1FB;color:#0C447C;border:0.5px solid #B5D4F4}
+.badge.red{background:#FCEBEB;color:#791F1F;border:0.5px solid #F7C1C1}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:14px 0}
+.input-field{width:100%;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;color:var(--color-text-primary);outline:none}
+.input-field:focus{border-color:#FAC775}
+select.input-field{cursor:pointer}
+.row{display:flex;gap:10px;align-items:center}
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.5rem;width:90%;max-width:420px;border:0.5px solid var(--color-border-tertiary)}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:1rem}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center}
+.stat-num{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+
+<h2 class="sr-only">Sistema de limpeza semanal BAJA UEA — checklist, grupos, auditoria e histórico</h2>
+
+<div class="app" id="root"></div>
+
+<script>
+const GRUPOS = {
+  1: {
+    auditores: ["Adriely Freitas","Marcos Fonseca"],
+    membros: ["Ricardo Santiago","Pedro Victor","Matheus Rodrigues","Silvano Pires","Kennedy Maxwell","Sabrina Gordiano"]
+  },
+  2: {
+    auditores: ["Evellyn Belém","Mayla Martins"],
+    membros: ["Carlos Carvalho","Matheus Cabral","Asafe Barros","Pedro César","João Victor"]
+  },
+  3: {
+    auditores: ["Leonardo Fernandes","Arthur Henrique"],
+    membros: ["Felipe Escobar","Henrique Vasconcelos","Endel Salles","Alexander José","Mariana Sabugosa","Hanna Mattos"]
+  },
+  4: {
+    auditores: ["Maria Luisa","Guilherme Dantas"],
+    membros: ["Giovanna Medeiros","Aquiles Barroso","Bernardo Gontijo","Luís Felipe","Gabrielly Silva","Arthur Lelis"]
+  },
+  5: {
+    auditores: ["João Uchôa","João Guedes"],
+    membros: ["Larissa Dantas","Ester Alves","Willian Cevalho","Lucas Natanael","Edy Maia","André Pereira"]
+  }
+};
+
+const TAREFAS_MEZANINO = [
+  "Varrer o andar","Organizar as mesas","Arrumar as cadeiras","Trocar o lixo",
+  "Limpar micro-ondas","Limpar geladeira II","Limpar armário de bebidas","Tirar teia de aranha"
+];
+const TAREFAS_TERREO = [
+  "Varrer o andar","Varrer as escadas","Varrer fachada","Retirar teia de aranha","Limpar a pia"
+];
+
+function getStorageKey(){return 'baja_limpeza_v2'}
+function load(){try{return JSON.parse(localStorage.getItem(getStorageKey()))||{semanas:[],semanal_atual:null}}catch{return {semanas:[],semanal_atual:null}}}
+function save(data){try{localStorage.setItem(getStorageKey(),JSON.stringify(data))}catch{}}
+
+function createSemana(grupo,periodo){
+  const gr = GRUPOS[grupo];
+  const allMembros = [...gr.auditores,...gr.membros];
+  const tasks = [];
+  TAREFAS_MEZANINO.forEach((t,i)=>{
+    tasks.push({id:'mez_'+i,nome:t,andar:'Mezanino',responsavel:allMembros[i%allMembros.length]||'',auditor:'',done:false,doneBy:''});
+  });
+  TAREFAS_TERREO.forEach((t,i)=>{
+    tasks.push({id:'ter_'+i,nome:t,andar:'Térreo',responsavel:allMembros[(i+3)%allMembros.length]||'',auditor:'',done:false,doneBy:''});
+  });
+  return {grupo,periodo,tasks,criadoEm:Date.now(),fechado:false};
+}
+
+let appData = load();
+let state = {
+  tab:'minha',
+  selectedMember:'',
+  selectedGrupo:appData.semanal_atual?appData.semanal_atual.grupo:1,
+  faceState:'idle',
+  faceMsg:'',
+  histDetail:null,
+  adminMode:false,
+  adminTab:'config',
+  modal:null,
+  editTask:null
+};
+
+function getSemana(){return appData.semanal_atual}
+
+function render(){
+  const r = document.getElementById('root');
+  r.innerHTML = buildApp();
+  attachEvents();
+}
+
+function buildApp(){
+  return `
+  <div class="header">
+    <div class="logo">🏎️</div>
+    <div>
+      <h1>BAJA UEA — Limpeza Semanal</h1>
+      <p>Sistema de controle de limpeza da equipe</p>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+      <button class="btn-secondary" id="btnAdmin" style="font-size:12px;padding:6px 12px">${state.adminMode?'<i class="ti ti-arrow-left"></i> Sair':'<i class="ti ti-settings"></i> Gestão'}</button>
+    </div>
+  </div>
+  ${state.adminMode ? buildAdmin() : buildMembro()}
+  ${state.modal ? buildModal() : ''}
+  `;
+}
+
+function buildMembro(){
+  const sem = getSemana();
+  return `
+  <div class="nav">
+    <button class="${state.tab==='minha'?'active':''}" id="tabMinha"><i class="ti ti-user" aria-hidden="true"></i> Minha tarefa</button>
+    <button class="${state.tab==='lista'?'active':''}" id="tabLista"><i class="ti ti-list" aria-hidden="true"></i> Lista geral</button>
+    <button class="${state.tab==='auditar'?'active':''}" id="tabAuditar"><i class="ti ti-camera" aria-hidden="true"></i> Auditar</button>
+    <button class="${state.tab==='historico'?'active':''}" id="tabHistorico"><i class="ti ti-clock" aria-hidden="true"></i> Histórico</button>
+  </div>
+  ${!sem ? `<div class="card"><div class="status-banner warning"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Nenhuma semana ativa. Aguarde a gestão iniciar a semana.</div></div>` : ''}
+  ${state.tab==='minha' ? buildMinhaTarefa(sem) : ''}
+  ${state.tab==='lista' ? buildListaGeral(sem) : ''}
+  ${state.tab==='auditar' ? buildAuditar(sem) : ''}
+  ${state.tab==='historico' ? buildHistorico() : ''}
+  `;
+}
+
+function buildMinhaTarefa(sem){
+  if(!sem) return '';
+  const allMembros = [...GRUPOS[sem.grupo].auditores,...GRUPOS[sem.grupo].membros];
+  const minhas = sem.tasks.filter(t=>t.responsavel===state.selectedMember);
+  return `
+  <div class="card">
+    <p class="section-title">Quem é você?</p>
+    <div class="member-grid">
+      ${allMembros.map(m=>`<button class="member-btn ${state.selectedMember===m?'selected':''}" data-member="${m}">
+        ${m}<div class="role">${GRUPOS[sem.grupo].auditores.includes(m)?'Auditor(a)':'Membro'}</div>
+      </button>`).join('')}
+    </div>
+  </div>
+  ${state.selectedMember ? `
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:38px;height:38px;border-radius:50%;background:#FAEEDA;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:14px;color:#633806">${state.selectedMember.split(' ').map(x=>x[0]).slice(0,2).join('')}</div>
+      <div>
+        <p style="font-weight:500;font-size:14px;color:var(--color-text-primary)">${state.selectedMember}</p>
+        <p style="font-size:12px;color:var(--color-text-secondary)">Grupo ${sem.grupo} · ${GRUPOS[sem.grupo].auditores.includes(state.selectedMember)?'Auditor(a)':'Membro'}</p>
+      </div>
+      <div style="margin-left:auto"><span class="badge ${minhas.every(t=>t.done)?'green':'amber'}">${minhas.filter(t=>t.done).length}/${minhas.length} feitas</span></div>
+    </div>
+    ${minhas.length===0 ? `<div class="status-banner info"><i class="ti ti-info-circle" aria-hidden="true"></i> Nenhuma tarefa atribuída a você esta semana.</div>` : ''}
+    ${minhas.map(t=>`
+    <div class="task-row ${t.done?'done':''}">
+      <div class="task-check ${t.done?'checked':''}" data-taskid="${t.id}">
+        ${t.done?'<i class="ti ti-check" style="font-size:14px;color:#fff" aria-hidden="true"></i>':''}
+      </div>
+      <div class="task-info">
+        <div class="task-name" style="${t.done?'text-decoration:line-through;opacity:.6':''}">${t.nome}</div>
+        <div class="task-meta"><span class="floor-label" style="font-size:11px;padding:1px 7px">${t.andar}</span> ${t.done&&t.doneBy?`<span style="font-size:11px;color:var(--color-text-tertiary)">Auditado por ${t.doneBy}</span>`:''}</div>
+      </div>
+    </div>`).join('')}
+    ${GRUPOS[sem.grupo].auditores.includes(state.selectedMember)?`<div style="margin-top:10px"><div class="status-banner info" style="font-size:12px"><i class="ti ti-shield-check" aria-hidden="true"></i> Você é auditor(a). Use a aba "Auditar" para confirmar tarefas.</div></div>`:''}
+  </div>` : ''}
+  `;
+}
+
+function buildListaGeral(sem){
+  if(!sem) return '';
+  const pct = Math.round(sem.tasks.filter(t=>t.done).length/sem.tasks.length*100);
+  return `
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <p class="section-title" style="margin:0">Semana ${sem.periodo} · Grupo ${sem.grupo}</p>
+      <span class="badge ${pct===100?'green':pct>50?'amber':'blue'}">${pct}% concluída</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <hr class="divider">
+    <p class="section-title">Mezanino</p>
+    ${sem.tasks.filter(t=>t.andar==='Mezanino').map(t=>buildTaskRowGeral(t,sem)).join('')}
+    <hr class="divider">
+    <p class="section-title">Térreo</p>
+    ${sem.tasks.filter(t=>t.andar==='Térreo').map(t=>buildTaskRowGeral(t,sem)).join('')}
+  </div>`;
+}
+
+function buildTaskRowGeral(t,sem){
+  const isAud = GRUPOS[sem.grupo].auditores.includes(state.selectedMember);
+  return `
+  <div class="task-row ${t.done?'done':''}">
+    <div class="task-info">
+      <div class="task-name" style="${t.done?'text-decoration:line-through;opacity:.5':''}">
+        ${t.nome}
+      </div>
+      <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:11px;color:var(--color-text-secondary)"><i class="ti ti-user" style="font-size:11px" aria-hidden="true"></i> ${t.responsavel||'—'}</span>
+        ${t.done?`<span class="badge green" style="font-size:10px"><i class="ti ti-check" aria-hidden="true"></i> ${t.doneBy?'Por '+t.doneBy:'Feito'}</span>`:''}
+      </div>
+    </div>
+    ${isAud && !t.done?`<div class="task-check" data-taskid="${t.id}"><i class="ti ti-check" style="font-size:13px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>`:''}
+  </div>`;
+}
+
+function buildAuditar(sem){
+  if(!sem) return '';
+  const isAud = sem && GRUPOS[sem.grupo].auditores.includes(state.selectedMember);
+  return `
+  <div class="card">
+    <p class="section-title">Verificação de auditor</p>
+    ${!state.selectedMember?`<div class="status-banner warning"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Selecione seu nome na aba "Minha tarefa" primeiro.</div>`:
+    !isAud?`<div class="status-banner warning"><i class="ti ti-lock" aria-hidden="true"></i> Apenas auditores do grupo podem usar esta função.</div>`:`
+    <div class="face-box">
+      <div class="face-circle ${state.faceState}" id="faceCircle">
+        ${state.faceState==='idle'?'<i class="ti ti-camera" style="font-size:32px;color:var(--color-text-tertiary)" aria-hidden="true"></i>':''}
+        ${state.faceState==='scanning'?'<i class="ti ti-loader" style="font-size:32px;color:#BA7517" aria-hidden="true"></i>':''}
+        ${state.faceState==='ok'?'<i class="ti ti-shield-check" style="font-size:40px;color:#3B6D11" aria-hidden="true"></i>':''}
+        ${state.faceState==='fail'?'<i class="ti ti-x" style="font-size:40px;color:#A32D2D" aria-hidden="true"></i>':''}
+      </div>
+      <p class="face-label">${
+        state.faceState==='idle'?'Clique para simular o reconhecimento facial de auditor':
+        state.faceState==='scanning'?'Verificando identidade...':
+        state.faceState==='ok'?`<span style="color:#3B6D11;font-weight:500">✓ Auditor verificado: ${state.selectedMember}</span>`:
+        `<span style="color:#A32D2D">Verificação falhou. Tente novamente.</span>`
+      }</p>
+      ${state.faceState==='idle'||state.faceState==='fail'?`<button class="btn-primary" id="btnFace"><i class="ti ti-camera" aria-hidden="true"></i> Escanear rosto</button>`:''}
+      ${state.faceState==='ok'?`
+      <div style="width:100%;max-width:360px">
+        <p class="section-title">Confirmar tarefas como feitas</p>
+        ${sem.tasks.filter(t=>!t.done).map(t=>`
+        <div class="task-row">
+          <div class="task-check" data-audit="${t.id}"><i class="ti ti-check" style="font-size:13px;color:var(--color-text-tertiary)" aria-hidden="true"></i></div>
+          <div class="task-info">
+            <div class="task-name">${t.nome}</div>
+            <div class="task-meta">${t.andar} · <span class="task-responsible">${t.responsavel}</span></div>
+          </div>
+        </div>`).join('')}
+        ${sem.tasks.every(t=>t.done)?`<div class="status-banner success"><i class="ti ti-circle-check" aria-hidden="true"></i> Todas as tarefas concluídas!</div>`:''}
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:center">
+          <button class="btn-secondary" id="btnFaceReset">Resetar verificação</button>
+          <button class="btn-primary" id="btnFecharSemana">Fechar semana</button>
+        </div>
+      </div>`:''}
+    </div>`}
+  </div>`;
+}
+
+function buildHistorico(){
+  const hist = appData.semanas.filter(s=>s.fechado);
+  if(state.histDetail){
+    const sem = state.histDetail;
+    const pct = Math.round(sem.tasks.filter(t=>t.done).length/sem.tasks.length*100);
+    return `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <button class="btn-secondary" id="btnBackHist" style="padding:6px 10px"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>
+        <h3 style="font-size:14px;font-weight:500">Semana ${sem.periodo} · Grupo ${sem.grupo}</h3>
+        <span class="badge ${pct===100?'green':'amber'}" style="margin-left:auto">${pct}%</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num">${sem.tasks.filter(t=>t.done).length}</div><div class="stat-label">Concluídas</div></div>
+        <div class="stat-card"><div class="stat-num">${sem.tasks.length}</div><div class="stat-label">Total</div></div>
+        <div class="stat-card"><div class="stat-num">${pct}%</div><div class="stat-label">Taxa</div></div>
+      </div>
+      ${sem.tasks.map(t=>`
+      <div class="task-row ${t.done?'done':''}">
+        <div style="width:16px;height:16px;border-radius:3px;background:${t.done?'#639922':'var(--color-background-secondary)'};flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          ${t.done?'<i class="ti ti-check" style="font-size:11px;color:#fff" aria-hidden="true"></i>':''}
+        </div>
+        <div class="task-info">
+          <div class="task-name" style="font-size:12px;${t.done?'text-decoration:line-through;opacity:.5':''}">${t.nome}</div>
+          <div class="task-meta">${t.andar} · ${t.responsavel}</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+  return `
+  <div class="card">
+    <p class="section-title">Semanas anteriores</p>
+    ${hist.length===0?`<div class="status-banner info"><i class="ti ti-history" aria-hidden="true"></i> Nenhum histórico ainda. Semanas fechadas aparecerão aqui.</div>`:''}
+    ${hist.map(s=>{
+      const pct=Math.round(s.tasks.filter(t=>t.done).length/s.tasks.length*100);
+      return `
+      <div class="history-row" data-semhist="${s.criadoEm}">
+        <div>
+          <div class="history-date">Semana ${s.periodo} · Grupo ${s.grupo}</div>
+          <div class="history-meta">${s.tasks.filter(t=>t.done).length}/${s.tasks.length} tarefas concluídas</div>
+          <div class="progress-bar" style="width:160px;margin-top:5px"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>
+        <span class="badge ${pct===100?'green':'amber'}">${pct}%</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function buildAdmin(){
+  const sem = getSemana();
+  return `
+  <div class="nav">
+    <button class="${state.adminTab==='config'?'active':''}" id="aTabConfig"><i class="ti ti-settings" aria-hidden="true"></i> Configurar semana</button>
+    <button class="${state.adminTab==='atribuir'?'active':''}" id="aTabAtribuir"><i class="ti ti-users" aria-hidden="true"></i> Atribuir tarefas</button>
+    <button class="${state.adminTab==='hist'?'active':''}" id="aTabHist"><i class="ti ti-clock" aria-hidden="true"></i> Histórico</button>
+  </div>
+  ${state.adminTab==='config' ? buildAdminConfig(sem) : ''}
+  ${state.adminTab==='atribuir' ? buildAdminAtribuir(sem) : ''}
+  ${state.adminTab==='hist' ? buildHistorico() : ''}
+  `;
+}
+
+function buildAdminConfig(sem){
+  return `
+  <div class="card">
+    <p class="section-title">Semana atual</p>
+    ${sem?`
+    <div class="status-banner success"><i class="ti ti-circle-check" aria-hidden="true"></i> Semana ativa: ${sem.periodo} · Grupo ${sem.grupo}</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">${sem.tasks.filter(t=>t.done).length}</div><div class="stat-label">Concluídas</div></div>
+      <div class="stat-card"><div class="stat-num">${sem.tasks.filter(t=>!t.done).length}</div><div class="stat-label">Pendentes</div></div>
+      <div class="stat-card"><div class="stat-num">${Math.round(sem.tasks.filter(t=>t.done).length/sem.tasks.length*100)}%</div><div class="stat-label">Taxa</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn-primary" id="btnFecharAdmin">Fechar e arquivar semana</button>
+      <button class="btn-secondary" id="btnResetarSemana">Resetar tarefas</button>
+    </div>
+    `:`<div class="status-banner warning"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Nenhuma semana ativa.</div>`}
+    <hr class="divider">
+    <p class="section-title">Iniciar nova semana</p>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1">
+        <label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:4px">Período</label>
+        <input class="input-field" id="inputPeriodo" placeholder="Ex: 23/06 – 27/06/2025" value="">
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:4px">Grupo</label>
+        <select class="input-field" id="selectGrupo" style="width:100px">
+          ${[1,2,3,4,5].map(g=>`<option value="${g}" ${(sem?sem.grupo:state.selectedGrupo)==g?'selected':''}>Grupo ${g}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" id="btnIniciarSemana">Iniciar semana <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+  </div>`;
+}
+
+function buildAdminAtribuir(sem){
+  if(!sem) return `<div class="card"><div class="status-banner warning"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Inicie uma semana primeiro.</div></div>`;
+  const gr = GRUPOS[sem.grupo];
+  const allMembros = [...gr.auditores,...gr.membros];
+  return `
+  <div class="card">
+    <p class="section-title">Atribuir responsáveis · Grupo ${sem.grupo}</p>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:12px">Clique em uma tarefa para reatribuir o responsável.</p>
+    <p class="section-title">Mezanino</p>
+    ${sem.tasks.filter(t=>t.andar==='Mezanino').map(t=>buildAdminTaskRow(t,allMembros)).join('')}
+    <hr class="divider">
+    <p class="section-title">Térreo</p>
+    ${sem.tasks.filter(t=>t.andar==='Térreo').map(t=>buildAdminTaskRow(t,allMembros)).join('')}
+  </div>`;
+}
+
+function buildAdminTaskRow(t,membros){
+  return `
+  <div class="task-row" style="cursor:pointer" data-edittask="${t.id}">
+    <div class="task-info">
+      <div class="task-name">${t.nome}</div>
+      <div class="task-meta">Responsável: <strong style="color:var(--color-text-primary)">${t.responsavel||'—'}</strong></div>
+    </div>
+    <i class="ti ti-pencil" style="font-size:15px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+  </div>`;
+}
+
+function buildModal(){
+  const {type,data} = state.modal;
+  if(type==='editTask'){
+    const sem = getSemana();
+    const gr = GRUPOS[sem.grupo];
+    const allMembros = [...gr.auditores,...gr.membros];
+    const t = sem.tasks.find(x=>x.id===data.taskId);
+    return `<div class="modal-bg" id="modalBg">
+      <div class="modal">
+        <h3>Atribuir: ${t.nome}</h3>
+        <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:12px">${t.andar}</p>
+        <select class="input-field" id="modalSelect" style="margin-bottom:16px">
+          ${allMembros.map(m=>`<option value="${m}" ${t.responsavel===m?'selected':''}>${m}${gr.auditores.includes(m)?' (aud)':''}</option>`).join('')}
+        </select>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn-secondary" id="modalClose">Cancelar</button>
+          <button class="btn-primary" id="modalSave">Salvar</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+function attachEvents(){
+  const q = id => document.getElementById(id);
+  const on = (id,ev,fn) => {const el=q(id);if(el)el.addEventListener(ev,fn)};
+
+  on('btnAdmin','click',()=>{state.adminMode=!state.adminMode;state.tab='minha';state.adminTab='config';render()});
+  on('tabMinha','click',()=>{state.tab='minha';render()});
+  on('tabLista','click',()=>{state.tab='lista';render()});
+  on('tabAuditar','click',()=>{state.tab='auditar';render()});
+  on('tabHistorico','click',()=>{state.tab='historico';render()});
+  on('aTabConfig','click',()=>{state.adminTab='config';render()});
+  on('aTabAtribuir','click',()=>{state.adminTab='atribuir';render()});
+  on('aTabHist','click',()=>{state.adminTab='hist';render()});
+
+  document.querySelectorAll('[data-member]').forEach(btn=>{
+    btn.addEventListener('click',()=>{state.selectedMember=btn.dataset.member;render()});
+  });
+
+  document.querySelectorAll('[data-taskid]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const sem=getSemana(); if(!sem)return;
+      const t=sem.tasks.find(x=>x.id===btn.dataset.taskid);
+      if(!t)return;
+      const isAud=GRUPOS[sem.grupo].auditores.includes(state.selectedMember);
+      if(isAud&&state.faceState==='ok'){t.done=!t.done;if(t.done)t.doneBy=state.selectedMember;else t.doneBy='';}
+      else if(isAud&&state.tab==='lista'){t.done=!t.done;if(t.done)t.doneBy=state.selectedMember||'Auditor';else t.doneBy='';}
+      else if(!isAud){t.done=!t.done;if(t.done)t.doneBy='Auto';else t.doneBy='';}
+      save(appData);render();
+    });
+  });
+
+  document.querySelectorAll('[data-audit]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const sem=getSemana(); if(!sem)return;
+      const t=sem.tasks.find(x=>x.id===btn.dataset.audit);
+      if(t){t.done=true;t.doneBy=state.selectedMember;}
+      save(appData);render();
+    });
+  });
+
+  on('btnFace','click',()=>{
+    state.faceState='scanning';render();
+    setTimeout(()=>{
+      const sem=getSemana();
+      if(sem&&GRUPOS[sem.grupo].auditores.includes(state.selectedMember)){
+        state.faceState='ok';
+      }else{
+        state.faceState='fail';
+      }
+      render();
+    },1800);
+  });
+  on('btnFaceReset',()=>{state.faceState='idle';render()});
+  on('btnFecharSemana','click',()=>{
+    const sem=getSemana();
+    if(sem){sem.fechado=true;appData.semanas.push({...sem});appData.semanal_atual=null;save(appData);state.faceState='idle';state.tab='historico';render();}
+  });
+  on('btnBackHist','click',()=>{state.histDetail=null;render()});
+  document.querySelectorAll('[data-semhist]').forEach(row=>{
+    row.addEventListener('click',()=>{
+      const sem=appData.semanas.find(s=>String(s.criadoEm)===row.dataset.semhist);
+      if(sem){state.histDetail=sem;render();}
+    });
+  });
+  on('btnIniciarSemana','click',()=>{
+    const periodo=q('inputPeriodo')&&q('inputPeriodo').value.trim();
+    const grupo=parseInt(q('selectGrupo')&&q('selectGrupo').value);
+    if(!periodo){alert('Informe o período.');return;}
+    if(appData.semanal_atual){appData.semanas.push({...appData.semanal_atual,fechado:true});}
+    appData.semanal_atual=createSemana(grupo,periodo);
+    save(appData);render();
+  });
+  on('btnFecharAdmin','click',()=>{
+    const sem=getSemana();
+    if(sem){sem.fechado=true;appData.semanas.push({...sem});appData.semanal_atual=null;save(appData);render();}
+  });
+  on('btnResetarSemana','click',()=>{
+    const sem=getSemana();
+    if(sem){sem.tasks.forEach(t=>{t.done=false;t.doneBy='';});save(appData);render();}
+  });
+  document.querySelectorAll('[data-edittask]').forEach(row=>{
+    row.addEventListener('click',()=>{state.modal={type:'editTask',data:{taskId:row.dataset.edittask}};render()});
+  });
+  on('modalClose','click',()=>{state.modal=null;render()});
+  on('modalSave','click',()=>{
+    const sem=getSemana(); if(!sem)return;
+    const t=sem.tasks.find(x=>x.id===state.modal.data.taskId);
+    const sel=document.getElementById('modalSelect');
+    if(t&&sel){t.responsavel=sel.value;}
+    state.modal=null;save(appData);render();
+  });
+  on('modalBg','click',e=>{if(e.target.id==='modalBg'){state.modal=null;render();}});
+}
+
+render();
+</script>
